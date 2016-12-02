@@ -1,0 +1,69 @@
+@(title: String)(content: Html)(implicit request: RequestHeader, flash: Flash = Flash())
+
+@import _root_.auth.{AuthenticatedRequest, Capabilities, isAuthenticated, isAuthorized}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>@title</title>
+
+        <link href="@routes.Assets.versioned("lib/bootstrap/css/bootstrap.min.css")" rel="stylesheet" type="text/css">
+    </head>
+    <body>
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="@routes.Application.index()">play-auth</a>
+                </div>
+
+                @request match {
+                    case authenticatedRequest: AuthenticatedRequest[User @unchecked, _] => {
+                        <p class="navbar-text">
+                            Signed in as <em>@authenticatedRequest.identity.username</em>
+                            @if(isAuthorized(Capabilities.Admin)) {
+                                <span class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>
+                            }
+                        </p>
+                    }
+                    case _ => {}
+                }
+
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="@routes.Application.index()">Home</a></li>
+                    <li><a href="@routes.WithAuthentication.authenticated()">Authenticated</a></li>
+                    <li><a href="@routes.WithAuthentication.maybeAuthenticated()">MaybeAuthenticated</a></li>
+                    <li><a href="@routes.WithAuthorization.authorizedAdmin()">Authorized Admin</a></li>
+                    <li><a href="@routes.WithAuthorization.maybeAuthorized()">MaybeAuthorized</a></li>
+                    @if(isAuthenticated) {
+                        <li><a href="@routes.LoginLogout.doLogout()">Logout</a></li>
+                    } else {
+                        <li><a href="@routes.LoginLogout.login()">Login</a></li>
+                    }
+                </ul>
+            </div>
+        </nav>
+
+        <div class="row">
+            <div class="col-xs-4 col-xs-offset-4">
+                @defining(Seq(
+                    ("success", "success"),
+                    ("info", "info"),
+                    ("warning", "warning"),
+                    ("error", "danger")
+                )) { flashMessageTypes =>
+                    @flashMessageTypes.map { case (messageType, alertClass) =>
+                        @flash.get(messageType).map { message =>
+                            <div class="alert alert-@alertClass" role="alert">
+                                @Html(message.replace("\n", "<br>"))
+                            </div>
+                        }
+                    }
+                }
+
+                <h1>@title</h1>
+
+                @content
+            </div>
+        </div>
+    </body>
+</html>

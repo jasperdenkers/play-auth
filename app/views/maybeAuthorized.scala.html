@@ -1,0 +1,15 @@
+@()(implicit request: RequestHeader, flash: play.api.mvc.Flash)
+
+@main("Maybe Authorized") {
+
+        <p>You are neither required to be authenticated nor authorized to view this page.</p>
+
+        <p>If you are either authenticated or authorized, you can see that the respective information about your request is available:</p>
+
+        <ul>
+                <li>If you are <strong>not authenticated</strong>, the page is still reachable but there will be no username in the topbar.</li>
+                <li>If you are <strong>authenticated but not authorized as admin</strong>, your username will be visible in the topbar.</li>
+                <li>If you are <strong>authenticated and authorized as admin</strong>, your username will be visible in the topbar including a star that indicates your <code>Admin</code> capabilities.</li>
+        </ul>
+
+}

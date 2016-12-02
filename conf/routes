@@ -1,0 +1,14 @@
+GET     /                           controllers.Application.index
+
+GET     /login                      controllers.LoginLogout.login
+POST    /login                      controllers.LoginLogout.doLogin
+GET     /logout                     controllers.LoginLogout.doLogout
+
+GET     /authenticated              controllers.WithAuthentication.authenticated
+GET     /maybeAuthenticated         controllers.WithAuthentication.maybeAuthenticated
+
+GET     /authorizedAdmin            controllers.WithAuthorization.authorizedAdmin
+GET     /maybeAuthorized            controllers.WithAuthorization.maybeAuthorized
+
+GET     /assets/fonts/*file         controllers.Assets.at(path="/public/lib/bootstrap/fonts", file)
+GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

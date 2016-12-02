@@ -1,0 +1,14 @@
+@()(implicit request: RequestHeader, flash: play.api.mvc.Flash)
+
+@main("Maybe Authenticated") {
+
+        <p>You are not required to be authenticated to view this page.</p>
+
+        <p>If you are authenticated, you can see that the respective information about your request is available:</p>
+
+        <ul>
+                <li>If you are <strong>not authenticated</strong>, the page is still reachable but there will be no username in the topbar.</li>
+                <li>If you are <strong>authenticated</strong>, your username will be visible in the topbar.</li>
+        </ul>
+
+}

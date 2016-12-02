@@ -1,0 +1,25 @@
+image: hseeberger/scala-sbt
+
+cache:
+  paths:
+    - .ivy2/cache
+    - .sbt/boot/
+  key: ${CI_PROJECT_NAME}
+    
+after_script:
+  # Tricks to avoid unnecessary cache updates
+  - find `pwd`/.ivy2 -name "ivydata-*.properties" -delete
+  - find `pwd`/.sbt -name "*.lock" -delete
+
+stages:
+  - test
+
+test:
+  script:
+    - sbt -Dsbt.ivy.home=`pwd`/.ivy2 -Dsbt.boot.directory=`pwd`/.sbt/boot clean coverage test coverageReport
+    - mkdir scoverage-report
+    - cp -R target/scala-2.11/scoverage-report/* scoverage-report/
+  artifacts:
+    name: scoverage-report
+    paths:
+      - scoverage-report/*
