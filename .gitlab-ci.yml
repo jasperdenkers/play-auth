@@ -5,7 +5,13 @@ cache:
     - .ivy2/cache
     - .sbt/boot/
   key: ${CI_PROJECT_NAME}
-    
+
+before_script:
+  - export PGP_PATH=`pwd`/.pgp
+  - mkdir PGP_PATH
+  - echo ${PGP_PUBRING} > $PGP_PATH/pubring.asc
+  - echo ${PGP_SECRING} > $PGP_PATH/secring.asc
+
 after_script:
   # Tricks to avoid unnecessary cache updates
   - find `pwd`/.ivy2 -name "ivydata-*.properties" -delete
@@ -13,6 +19,7 @@ after_script:
 
 stages:
   - test
+  - publish
 
 test-unit:
   stage: test
@@ -29,3 +36,9 @@ test-integration:
   stage: test
   script:
     - sbt -Dsbt.ivy.home=`pwd`/.ivy2 -Dsbt.boot.directory=`pwd`/.sbt/boot "project integration" ";clean;test"
+
+publish-snapshot:
+  stage: publish
+  only: snapshot
+  script:
+    - sbt -Dsbt.ivy.home=`pwd`/.ivy2 -Dsbt.boot.directory=`pwd`/.sbt/boot "project core" "publishSigned"
