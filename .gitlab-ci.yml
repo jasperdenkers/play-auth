@@ -8,7 +8,7 @@ cache:
 
 before_script:
   - export PGP_PATH=`pwd`/.pgp
-  - mkdir PGP_PATH
+  - mkdir $PGP_PATH
   - echo ${PGP_PUBRING} > $PGP_PATH/pubring.asc
   - echo ${PGP_SECRING} > $PGP_PATH/secring.asc
 
