@@ -14,12 +14,18 @@ after_script:
 stages:
   - test
 
-test:
+test-unit:
+  stage: test
   script:
-    - sbt -Dsbt.ivy.home=`pwd`/.ivy2 -Dsbt.boot.directory=`pwd`/.sbt/boot clean coverage test coverageReport
+    - sbt -Dsbt.ivy.home=`pwd`/.ivy2 -Dsbt.boot.directory=`pwd`/.sbt/boot "project core" ";clean;coverage;test;coverageReport"
     - mkdir scoverage-report
     - cp -R target/scala-2.11/scoverage-report/* scoverage-report/
   artifacts:
     name: scoverage-report
     paths:
       - scoverage-report/*
+
+test-integration:
+  stage: test
+  script:
+    - sbt -Dsbt.ivy.home=`pwd`/.ivy2 -Dsbt.boot.directory=`pwd`/.sbt/boot "project integration" ";clean;test"

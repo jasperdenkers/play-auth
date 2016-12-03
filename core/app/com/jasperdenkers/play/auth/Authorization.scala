@@ -1,4 +1,4 @@
-package auth
+package com.jasperdenkers.play.auth
 
 import play.api.mvc.{ActionBuilder, ActionFunction, Request, Result}
 

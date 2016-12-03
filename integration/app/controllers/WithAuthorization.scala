@@ -3,7 +3,8 @@ package controllers
 import javax.inject.Inject
 
 import auth.Capabilities.Admin
-import auth.{Authorization, UserAuthorizator}
+import auth.UserAuthorizator
+import com.jasperdenkers.play.auth.Authorization
 import models.User
 import play.api.mvc._
 

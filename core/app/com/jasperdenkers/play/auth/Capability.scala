@@ -1,4 +1,4 @@
-package auth
+package com.jasperdenkers.play.auth
 
 trait Capability {
   def authorize(tokens: Set[Token]): Boolean

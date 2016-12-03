@@ -3,6 +3,7 @@ package auth
 import javax.inject.Inject
 
 import auth.Tokens.IsAdmin
+import com.jasperdenkers.play.auth.Authorizator
 import models.User
 import play.api.Configuration
 import play.api.libs.crypto.CookieSignerProvider

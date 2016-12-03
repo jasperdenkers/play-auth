@@ -1,6 +1,7 @@
 package auth
 
 import auth.Tokens.IsAdmin
+import com.jasperdenkers.play.auth.CapabilityByToken
 
 object Capabilities {
 

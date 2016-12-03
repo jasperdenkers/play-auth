@@ -1,6 +1,7 @@
 @(title: String)(content: Html)(implicit request: RequestHeader, flash: Flash = Flash())
 
-@import _root_.auth.{AuthenticatedRequest, Capabilities, isAuthenticated, isAuthorized}
+@import _root_.auth.Capabilities
+@import com.jasperdenkers.play.auth.{AuthenticatedRequest, isAuthenticated, isAuthorized}
 
 <!DOCTYPE html>
 <html>

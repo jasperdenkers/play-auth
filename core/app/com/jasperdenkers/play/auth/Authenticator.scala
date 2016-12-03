@@ -1,6 +1,6 @@
-package auth
+package com.jasperdenkers.play.auth
 
-import play.api.mvc._
+import play.api.mvc.{Cookie, RequestHeader, Result}
 
 import scala.concurrent.Future
 

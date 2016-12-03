@@ -1,3 +1,0 @@
-package auth
-
-trait Token

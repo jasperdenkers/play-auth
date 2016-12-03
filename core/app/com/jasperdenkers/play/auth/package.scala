@@ -1,3 +1,5 @@
+package com.jasperdenkers.play
+
 import play.api.mvc.RequestHeader
 
 package object auth {

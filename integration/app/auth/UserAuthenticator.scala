@@ -3,6 +3,7 @@ package auth
 import java.time.Instant
 import javax.inject.Inject
 
+import com.jasperdenkers.play.auth.{LoginData, SessionCookieAuthenticator}
 import models.{User, UserRepository}
 import play.api.Configuration
 import play.api.libs.crypto.CookieSignerProvider

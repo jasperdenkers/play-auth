@@ -2,7 +2,8 @@ package controllers
 
 import javax.inject.Inject
 
-import auth.{Authentication, LoginData, UserAuthenticator}
+import auth.UserAuthenticator
+import com.jasperdenkers.play.auth.{Authentication, LoginData}
 import models.User
 import play.api.data.Forms._
 import play.api.data._

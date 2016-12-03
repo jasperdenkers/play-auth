@@ -1,19 +1,9 @@
-name := """play-auth"""
-
-version := "0.1"
-
-lazy val root = (project in file(".")).enablePlugins(PlayScala)
-
-scalaVersion := "2.11.8"
-
-libraryDependencies ++= Seq(
-  // Web assets
-  "org.webjars"       %% "webjars-play" % "2.5.0",
-  "org.webjars"       % "bootstrap"     % "3.3.5" exclude ("org.webjars", "jquery"),
-
-  // Crypto
-  "org.mindrot" % "jbcrypt" % "0.3m",
-  
-  // Testing
-  "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test
+lazy val commonSettings = Seq(
+  organization := "com.jasperdenkers",
+  version := "0.1.0-SNAPSHOT",
+  scalaVersion := "2.11.8"
 )
+
+lazy val core = (project in file("core")).settings(commonSettings: _*).enablePlugins(PlayScala)
+
+lazy val integration = (project in file("integration")).settings(commonSettings: _*).dependsOn(core).enablePlugins(PlayScala)
