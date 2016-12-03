@@ -39,6 +39,7 @@ test-integration:
 
 publish-snapshot:
   stage: publish
-  only: snapshot
+  only:
+    - snapshot
   script:
     - sbt -Dsbt.ivy.home=`pwd`/.ivy2 -Dsbt.boot.directory=`pwd`/.sbt/boot "project core" "publishSigned"
