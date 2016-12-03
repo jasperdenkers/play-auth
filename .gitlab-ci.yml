@@ -43,3 +43,10 @@ publish-snapshot:
     - snapshot
   script:
     - sbt -Dsbt.ivy.home=`pwd`/.ivy2 -Dsbt.boot.directory=`pwd`/.sbt/boot ";update;project core;publishSigned"
+
+publish-release:
+  stage: publish
+  only:
+    - tags
+  script:
+    - sbt -Dsbt.ivy.home=`pwd`/.ivy2 -Dsbt.boot.directory=`pwd`/.sbt/boot ";update;project core;release with-defaults release-version ${CI_BUILD_TAG}"
