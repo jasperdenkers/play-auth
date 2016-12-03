@@ -4,6 +4,11 @@ homepage := Some(url("https://gitlab.com/jasperdenkers/play-auth"))
 
 licenses := Seq("MIT" -> url("https://opensource.org/licenses/mit-license"))
 
+libraryDependencies ++= Seq(
+  // Testing
+  "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test
+)
+
 publishTo := {
   val nexus = "https://oss.sonatype.org/"
   if (isSnapshot.value)
