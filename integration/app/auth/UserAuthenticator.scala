@@ -13,41 +13,24 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.Try
 
-class UserAuthenticator @Inject()(configuration: Configuration, cookieSignerProvider: CookieSignerProvider) extends SessionCookieAuthenticator[User] with Results {
+case class Session(username: String, expires: Instant)
 
-  val cookieName             = configuration.getString("auth.sessionCookieName").getOrElse("session")
-  val cookieMaxAge           = configuration.getInt("auth.sessionCookieMaxAge").getOrElse(3600) // One hour
-  val cookieMaxAgeRemembered = configuration.getInt("auth.sessionCookieMaxAgeRemembered").getOrElse(7 * 24 * 3600) // One week
+object Session {
+  def empty = Session("", Instant.now)
+}
 
-  case class Session(username: String, expires: Instant)
+class UserAuthenticator @Inject()(val configuration: Configuration, val cookieSignerProvider: CookieSignerProvider) extends SessionCookieAuthenticator[User, Session] with Results {
 
-  object Session {
-    def empty = Session("", Instant.now)
-  }
+  def emptySession = Session.empty
 
-  trait SessionCookieBaker extends CookieBaker[Session] {
-    val COOKIE_NAME                           = cookieName
-    val emptyCookie                           = Session.empty
-    override val isSigned                     = true
-    val cookieSigner                          = cookieSignerProvider.get
-    def serialize(session: Session)           = Map("username" -> session.username, "expires" -> session.expires.getEpochSecond.toString)
-    def deserialize(map: Map[String, String]) = (for {
-      username <- map.get("username")
-      expires <- map.get("expires").flatMap {
-        epochSecondString => Try(epochSecondString.toLong).toOption.map(Instant.ofEpochSecond)
-      }
-    } yield Session(username, expires)).getOrElse(Session.empty)
-  }
+  def serializeSession(session: Session) = Map("username" -> session.username, "expires" -> session.expires.getEpochSecond.toString)
 
-  object SessionCookieBaker extends SessionCookieBaker
-
-  object TransientSessionCookieBaker extends SessionCookieBaker {
-    override val maxAge = None
-  }
-
-  object PersistentSessionCookieBaker extends SessionCookieBaker {
-    override val maxAge = Some(cookieMaxAgeRemembered)
-  }
+  def deserializeSession(map: Map[String, String]) = for {
+    username <- map.get("username")
+    expires <- map.get("expires").flatMap {
+      epochSecondString => Try(epochSecondString.toLong).toOption.map(Instant.ofEpochSecond)
+    }
+  } yield Session(username, expires)
 
   def authenticatedIdentity(request: RequestHeader) = {
     val session = SessionCookieBaker.decodeFromCookie(request.cookies.get(cookieName))
