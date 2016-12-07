@@ -63,11 +63,11 @@ class UserAuthenticator @Inject()(val configuration: Configuration, val cookieSi
       case _ => None
     }
 
-  def logout(requestHeader: RequestHeader, redirect: Result) = {
+  def logout(requestHeader: RequestHeader, redirectAfterLogout: Result) = {
     val discardingCookie = DiscardingCookie(cookieName)
 
     Future.successful {
-      redirect.discardingCookies(discardingCookie)
+      redirectAfterLogout.discardingCookies(discardingCookie)
     }
   }
 

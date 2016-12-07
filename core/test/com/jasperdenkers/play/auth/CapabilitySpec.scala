@@ -6,22 +6,22 @@ class CapabilitySpec extends PlaySpec {
 
   "Capabilities" must {
 
-    object tokenA extends Token
-    object tokenB extends Token
+    object TokenA extends Token
+    object TokenB extends Token
 
-    object capabilityByTokenA extends CapabilityByToken {
-      def predicate = _ == tokenA
+    object CapabilityByTokenA extends CapabilityByToken {
+      def predicate = _ == TokenA
     }
-    object capabilityByTokenB extends CapabilityByToken {
-      def predicate = _ == tokenB
-    }
-
-    "be composable into conjuctions with implicit && operator" in {
-      (capabilityByTokenA && capabilityByTokenB) mustBe Conjunction(capabilityByTokenA, capabilityByTokenB)
+    object CapabilityByTokenB extends CapabilityByToken {
+      def predicate = _ == TokenB
     }
 
-    "be composable into disjunctions with implicit || operator" in {
-      (capabilityByTokenA || capabilityByTokenB) mustBe Disjunction(capabilityByTokenA, capabilityByTokenB)
+    "be composable into conjuctions with the implicit && operator" in {
+      (CapabilityByTokenA && CapabilityByTokenB) mustBe Conjunction(CapabilityByTokenA, CapabilityByTokenB)
+    }
+
+    "be composable into disjunctions with the implicit || operator" in {
+      (CapabilityByTokenA || CapabilityByTokenB) mustBe Disjunction(CapabilityByTokenA, CapabilityByTokenB)
     }
 
   }

@@ -52,6 +52,6 @@ trait SessionCookieAuthenticator[A, B <: AnyRef] extends Authenticator[A] {
 
   def login(loginData: LoginData): Future[Option[Cookie]]
 
-  def logout(request: RequestHeader, redirect: Result): Future[Result]
+  def logout(request: RequestHeader, redirectAfterLogout: Result): Future[Result]
 
 }
