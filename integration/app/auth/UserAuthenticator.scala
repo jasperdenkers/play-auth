@@ -13,27 +13,37 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.Try
 
-case class Session(username: String, expires: Instant)
+case class Session(username: String, expires: Instant, requestCount: Int)
 
 object Session {
-  def empty = Session("", Instant.now)
+  def empty = Session("", Instant.now, 0)
 }
 
 class UserAuthenticator @Inject()(val configuration: Configuration, val cookieSignerProvider: CookieSignerProvider) extends SessionCookieAuthenticator[User, Session] with Results {
 
   def emptySession = Session.empty
 
-  def serializeSession(session: Session) = Map("username" -> session.username, "expires" -> session.expires.getEpochSecond.toString)
+  def serializeSession(session: Session) =
+    Map(
+      "username" -> session.username,
+      "expires" -> session.expires.getEpochSecond.toString,
+      "requestCount" -> session.requestCount.toString
+    )
 
   def deserializeSession(map: Map[String, String]) = for {
     username <- map.get("username")
     expires <- map.get("expires").flatMap {
       epochSecondString => Try(epochSecondString.toLong).toOption.map(Instant.ofEpochSecond)
     }
-  } yield Session(username, expires)
+    requestCount <- map.get("requestCount").flatMap {
+      requestCountString => Try(requestCountString.toInt).toOption
+    }
+  } yield Session(username, expires, requestCount)
 
   def authenticatedIdentity(session: Session) =
     UserRepository.find(session.username)
+
+  override def updateSession(session: Session): Future[Session] = Future.successful(session.copy(requestCount = session.requestCount + 1))
 
   def notAuthenticatedResult =
     Future.successful {
@@ -46,7 +56,7 @@ class UserAuthenticator @Inject()(val configuration: Configuration, val cookieSi
         val expiryTime = if (loginData.remember) cookieMaxAgeRemembered else cookieMaxAge
         val expires    = Instant.now.plusSeconds(expiryTime)
 
-        val session = Session(user.username, expires = expires)
+        val session = Session(user.username, expires, 0)
 
         val cookieBaker =
           if (loginData.remember)

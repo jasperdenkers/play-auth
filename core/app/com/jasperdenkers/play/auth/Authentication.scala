@@ -61,7 +61,7 @@ trait SessionAuthentication[A, B <: AnyRef] extends Authentication[A] {
       case None => block(request)
     }
 
-  def updatedSessionHook(session: B): Future[Unit]
+  def updatedSessionHook(session: B): Future[Unit] = Future.successful(())
 
 }
 

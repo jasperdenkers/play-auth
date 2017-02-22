@@ -75,8 +75,11 @@ trait SessionCookieAuthenticator[A, B <: AnyRef] extends SessionAuthenticator[A,
     override val maxAge = Some(cookieMaxAgeRemembered)
   }
 
+  def sessionFromCookie(cookie: Option[Cookie]) =
+    SessionCookieBaker.decodeFromCookie(cookie)
+
   def sessionFromRequest(request: RequestHeader) =
-    SessionCookieBaker.decodeFromCookie(request.cookies.get(cookieName))
+    sessionFromCookie(request.cookies.get(cookieName))
 
   def authenticatedIdentityWithUpdatedSessionCookie(request: RequestHeader): Future[Option[(A, B, Cookie)]] =
     authenticatedIdentityWithUpdatedSession(request).map(_.map {
