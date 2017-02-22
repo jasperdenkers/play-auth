@@ -5,7 +5,7 @@ import play.api.mvc.{ActionBuilder, ActionFunction, Request, Result}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-trait Authorization[A] extends Authentication[A] {
+trait Authorization[A] { self: Authentication[A] =>
 
   def authorizator: Authorizator[A]
 

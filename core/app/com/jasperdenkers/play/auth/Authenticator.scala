@@ -4,6 +4,7 @@ import play.api.Configuration
 import play.api.libs.crypto.CookieSignerProvider
 import play.api.mvc.{Cookie, CookieBaker, RequestHeader, Result}
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 trait Authenticator[A] {
@@ -16,7 +17,31 @@ trait Authenticator[A] {
 
 }
 
-trait SessionCookieAuthenticator[A, B <: AnyRef] extends Authenticator[A] {
+trait SessionAuthenticator[A, B <: AnyRef] extends Authenticator[A] {
+
+  def sessionFromRequest(request: RequestHeader): B
+
+  def authenticatedIdentity(session: B): Future[Option[A]]
+
+  def authenticatedIdentity(request: RequestHeader) =
+    authenticatedIdentity(sessionFromRequest(request))
+
+  def authenticatedIdentityWithUpdatedSession(request: RequestHeader): Future[Option[(A, B)]] = {
+    val session = sessionFromRequest(request)
+
+    authenticatedIdentity(session).flatMap {
+      case Some(identity) => updateSession(session).map { updatedSession =>
+        Some((identity, updatedSession))
+      }
+      case None => Future.successful(None)
+    }
+  }
+
+  def updateSession(session: B): Future[B] = Future.successful(session)
+
+}
+
+trait SessionCookieAuthenticator[A, B <: AnyRef] extends SessionAuthenticator[A, B] {
 
   def configuration: Configuration
   def cookieSignerProvider: CookieSignerProvider
@@ -49,6 +74,23 @@ trait SessionCookieAuthenticator[A, B <: AnyRef] extends Authenticator[A] {
   object PersistentSessionCookieBaker extends SessionCookieBaker {
     override val maxAge = Some(cookieMaxAgeRemembered)
   }
+
+  def sessionFromRequest(request: RequestHeader) =
+    SessionCookieBaker.decodeFromCookie(request.cookies.get(cookieName))
+
+  def authenticatedIdentityWithUpdatedSessionCookie(request: RequestHeader): Future[Option[(A, B, Cookie)]] =
+    authenticatedIdentityWithUpdatedSession(request).map(_.map {
+      case (identity, session) =>
+        val cookieBaker =
+          request.cookies.get(cookieName) match {
+            case Some(cookie) if cookie.maxAge.nonEmpty => PersistentSessionCookieBaker
+            case _ => TransientSessionCookieBaker
+          }
+
+        val cookie = cookieBaker.encodeAsCookie(session)
+
+        (identity, session, cookie)
+    })
 
   def login(loginData: LoginData): Future[Option[Cookie]]
 

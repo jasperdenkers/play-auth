@@ -32,11 +32,8 @@ class UserAuthenticator @Inject()(val configuration: Configuration, val cookieSi
     }
   } yield Session(username, expires)
 
-  def authenticatedIdentity(request: RequestHeader) = {
-    val session = SessionCookieBaker.decodeFromCookie(request.cookies.get(cookieName))
-
+  def authenticatedIdentity(session: Session) =
     UserRepository.find(session.username)
-  }
 
   def notAuthenticatedResult =
     Future.successful {
