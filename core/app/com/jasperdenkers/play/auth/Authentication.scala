@@ -1,6 +1,6 @@
 package com.jasperdenkers.play.auth
 
-import play.api.mvc.{ActionBuilder, Request, Result}
+import play.api.mvc.{ActionBuilder, Cookie, Request, Result}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -72,6 +72,7 @@ trait SessionCookieAuthentication[A, B <: AnyRef] extends SessionAuthentication[
       case Some((identity, updatedSession, updatedSessionCookie)) =>
         for {
           _      <- updatedSessionHook(updatedSession)
+          _      <- updatedSessionCookieHook(updatedSession, updatedSessionCookie)
           result <- block(AuthenticatedRequest(identity, request)).map(_.withCookies(updatedSessionCookie))
         } yield result
       case None => onUnauthenticated
@@ -82,9 +83,12 @@ trait SessionCookieAuthentication[A, B <: AnyRef] extends SessionAuthentication[
       case Some((identity, updatedSession, updatedSessionCookie)) =>
         for {
           _      <- updatedSessionHook(updatedSession)
+          _      <- updatedSessionCookieHook(updatedSession, updatedSessionCookie)
           result <- block(AuthenticatedRequest(identity, request)).map(_.withCookies(updatedSessionCookie))
         } yield result
       case None => block(request)
     }
+
+  def updatedSessionCookieHook(session: B, cookie: Cookie): Future[Unit] = Future.successful(())
 
 }
