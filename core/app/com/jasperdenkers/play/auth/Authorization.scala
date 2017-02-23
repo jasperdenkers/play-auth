@@ -5,13 +5,9 @@ import play.api.mvc.{ActionBuilder, ActionFunction, Request, Result}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-trait Authorization[A] { self: Authentication[A] =>
+trait Authorization[A] extends AuthRequests[A] { self: Authentication[A] =>
 
   def authorizator: Authorizator[A]
-
-  def authenticator = authorizator
-
-  type AuthorizedRequestWithIdentity[B] = AuthorizedRequest[A, B]
 
   def onUnauthorized[B](authorizedRequest: AuthorizedRequestWithIdentity[B]): Future[Result] = authorizator.notAuthorizedResult(authorizedRequest)
 

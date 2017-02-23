@@ -9,8 +9,6 @@ import scala.concurrent.Future
 
 trait Authenticator[A] {
 
-  type AuthenticatedRequestWithIdentity[B] = AuthenticatedRequest[A, B]
-
   def authenticatedIdentity(request: RequestHeader): Future[Option[A]]
 
   def notAuthenticatedResult: Future[Result]

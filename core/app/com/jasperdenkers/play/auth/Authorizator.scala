@@ -5,9 +5,9 @@ import play.api.mvc.Result
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-trait Authorizator[A] extends Authenticator[A] {
+trait Authorizator[A] extends AuthRequests[A] {
 
-  type AuthorizedRequestWithIdentity[B] = AuthenticatedRequest[A, B]
+  def authenticator: Authenticator[A]
 
   def getTokens[B](authenticatedRequest: AuthenticatedRequestWithIdentity[B]): Future[Set[Token]]
 

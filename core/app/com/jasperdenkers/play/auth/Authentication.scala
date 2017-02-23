@@ -5,11 +5,9 @@ import play.api.mvc.{ActionBuilder, Request, Result}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-trait Authentication[A] {
+trait Authentication[A] extends AuthRequests[A] {
 
   def authenticator: Authenticator[A]
-
-  type AuthenticatedRequestWithIdentity[B] = AuthenticatedRequest[A, B]
 
   def onUnauthenticated: Future[Result] = authenticator.notAuthenticatedResult
 
