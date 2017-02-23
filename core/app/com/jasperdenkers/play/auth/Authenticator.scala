@@ -84,7 +84,7 @@ trait SessionCookieAuthenticator[A, B <: AnyRef] extends SessionAuthenticator[A,
       case Some((identity, session)) =>
         val originalCookie = request.cookies.get(cookieName)
 
-        updateSessionCookie(session, originalCookie).map { updatedSession =>
+        updateSessionWithCookie(session, originalCookie).map { updatedSession =>
           val cookieBaker =
             originalCookie match {
               case Some(cookie) if cookie.maxAge.nonEmpty => PersistentSessionCookieBaker
@@ -98,7 +98,7 @@ trait SessionCookieAuthenticator[A, B <: AnyRef] extends SessionAuthenticator[A,
       case None => Future.successful(None)
     }
 
-  def updateSessionCookie(session: B, cookie: Option[Cookie]): Future[B] = Future.successful(session)
+  def updateSessionWithCookie(session: B, cookie: Option[Cookie]): Future[B] = Future.successful(session)
 
   def login(loginData: LoginData): Future[Option[Cookie]]
 
