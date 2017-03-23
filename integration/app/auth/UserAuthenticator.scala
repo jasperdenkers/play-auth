@@ -45,7 +45,7 @@ class UserAuthenticator @Inject()(val configuration: Configuration, val cookieSi
 
   override def updateSession(session: Session): Future[Session] = Future.successful(session.copy(requestCount = session.requestCount + 1))
 
-  def notAuthenticatedResult =
+  def notAuthenticatedResult[B](request: Request[B]) =
     Future.successful {
       Redirect(controllers.routes.LoginLogout.login())
     }

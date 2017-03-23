@@ -1,6 +1,6 @@
 package com.jasperdenkers.play.auth
 
-import play.api.mvc.{ActionBuilder, Cookie, Request, Result}
+import play.api.mvc._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -9,7 +9,7 @@ trait Authentication[A] extends AuthRequests[A] {
 
   def authenticator: Authenticator[A]
 
-  def onUnauthenticated: Future[Result] = authenticator.notAuthenticatedResult
+  def onUnauthenticated[B](request: Request[B]): Future[Result] = authenticator.notAuthenticatedResult(request)
 
   object Authenticated extends ActionBuilder[AuthenticatedRequestWithIdentity] {
     def invokeBlock[B](request: Request[B], block: (AuthenticatedRequestWithIdentity[B]) => Future[Result]) =
@@ -24,7 +24,7 @@ trait Authentication[A] extends AuthRequests[A] {
   protected def authenticated[B](request: Request[B], block: (AuthenticatedRequestWithIdentity[B]) => Future[Result]) =
     authenticator.authenticatedIdentity(request).flatMap {
       case Some(identity) => block(AuthenticatedRequest(identity, request))
-      case None => onUnauthenticated
+      case None => onUnauthenticated(request)
     }
 
   protected def maybeAuthenticated[B](request: Request[B], block: (Request[B]) => Future[Result]) =
@@ -46,7 +46,7 @@ trait SessionAuthentication[A, B <: AnyRef] extends Authentication[A] {
           _      <- updatedSessionHook(updatedSession)
           result <- block(AuthenticatedRequest(identity, request))
         } yield result
-      case None => onUnauthenticated
+      case None => onUnauthenticated(request)
     }
 
   override def maybeAuthenticated[C](request: Request[C], block: (Request[C]) => Future[Result]) =
@@ -75,7 +75,7 @@ trait SessionCookieAuthentication[A, B <: AnyRef] extends SessionAuthentication[
           _      <- updatedSessionCookieHook(updatedSession, updatedSessionCookie)
           result <- block(AuthenticatedRequest(identity, request)).map(_.withCookies(updatedSessionCookie))
         } yield result
-      case None => onUnauthenticated
+      case None => onUnauthenticated(request)
     }
 
   override def maybeAuthenticated[C](request: Request[C], block: (Request[C]) => Future[Result]) =

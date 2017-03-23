@@ -2,7 +2,7 @@ package com.jasperdenkers.play.auth
 
 import play.api.Configuration
 import play.api.libs.crypto.CookieSignerProvider
-import play.api.mvc.{Cookie, CookieBaker, RequestHeader, Result}
+import play.api.mvc._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -11,7 +11,7 @@ trait Authenticator[A] {
 
   def authenticatedIdentity(request: RequestHeader): Future[Option[A]]
 
-  def notAuthenticatedResult: Future[Result]
+  def notAuthenticatedResult[B](request: Request[B]): Future[Result]
 
 }
 
