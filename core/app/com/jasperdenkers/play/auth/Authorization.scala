@@ -1,17 +1,18 @@
 package com.jasperdenkers.play.auth
 
-import play.api.mvc.{ActionBuilder, ActionFunction, Request, Result}
+import play.api.mvc._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-trait Authorization[A] extends AuthRequests[A] { self: Authentication[A] =>
+trait Authorization[A] extends AuthRequests[A] { self: Authentication[A] with BaseController =>
 
   def authorizator: Authorizator[A]
 
   def onUnauthorized[B](authorizedRequest: AuthorizedRequestWithIdentity[B]): Future[Result] = authorizator.notAuthorizedResult(authorizedRequest)
 
   def Authorized(capabilities: Capability*) = Authenticated andThen new ActionFunction[AuthenticatedRequestWithIdentity, AuthorizedRequestWithIdentity] {
+    def executionContext = self.defaultExecutionContext
     def invokeBlock[B](authenticatedRequest: AuthenticatedRequestWithIdentity[B], block: (AuthorizedRequestWithIdentity[B]) => Future[Result]) =
       authorizator.getTokens(authenticatedRequest).flatMap { tokens =>
         val authorizedRequest = AuthorizedRequest.fromAuthenticatedRequest(authenticatedRequest, tokens)
@@ -23,7 +24,7 @@ trait Authorization[A] extends AuthRequests[A] { self: Authentication[A] =>
       }
   }
 
-  def MaybeAuthorized = MaybeAuthenticated andThen new ActionBuilder[Request] {
+  def MaybeAuthorized = MaybeAuthenticated andThen new BaseActionBuilder[Request] {
     def invokeBlock[B](request: Request[B], block: (Request[B]) => Future[Result]) = {
       request match {
         case authenticatedRequest: AuthenticatedRequestWithIdentity[B @unchecked] =>

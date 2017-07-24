@@ -5,18 +5,23 @@ import play.api.mvc._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-trait Authentication[A] extends AuthRequests[A] {
+trait Authentication[A] extends AuthRequests[A] { self: BaseController =>
 
   def authenticator: Authenticator[A]
 
   def onUnauthenticated[B](request: Request[B]): Future[Result] = authenticator.notAuthenticatedResult(request)
 
-  object Authenticated extends ActionBuilder[AuthenticatedRequestWithIdentity] {
+  trait BaseActionBuilder[T[_]] extends ActionBuilder[T, AnyContent] {
+    def parser = self.parse.defaultBodyParser
+    def executionContext = self.defaultExecutionContext
+  }
+
+  object Authenticated extends BaseActionBuilder[AuthenticatedRequestWithIdentity] {
     def invokeBlock[B](request: Request[B], block: (AuthenticatedRequestWithIdentity[B]) => Future[Result]) =
       authenticated(request, block)
   }
 
-  object MaybeAuthenticated extends ActionBuilder[Request] {
+  object MaybeAuthenticated extends BaseActionBuilder[Request] {
     def invokeBlock[B](request: Request[B], block: (Request[B]) => Future[Result]) =
       maybeAuthenticated(request, block)
   }
@@ -35,7 +40,7 @@ trait Authentication[A] extends AuthRequests[A] {
 
 }
 
-trait SessionAuthentication[A, B <: AnyRef] extends Authentication[A] {
+trait SessionAuthentication[A, B <: AnyRef] extends Authentication[A] { self: BaseController =>
 
   override def authenticator: SessionAuthenticator[A, B]
 
@@ -63,7 +68,7 @@ trait SessionAuthentication[A, B <: AnyRef] extends Authentication[A] {
 
 }
 
-trait SessionCookieAuthentication[A, B <: AnyRef] extends SessionAuthentication[A, B] {
+trait SessionCookieAuthentication[A, B <: AnyRef] extends SessionAuthentication[A, B] { self: BaseController =>
 
   override def authenticator: SessionCookieAuthenticator[A, B]
 

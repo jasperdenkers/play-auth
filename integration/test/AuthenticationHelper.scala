@@ -1,11 +1,11 @@
 import auth.UserAuthenticator
 import com.jasperdenkers.play.auth.LoginData
-import org.scalatestplus.play.OneAppPerSuite
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
-trait AuthenticationHelper { self: OneAppPerSuite =>
+trait AuthenticationHelper { self: GuiceOneAppPerSuite =>
 
   def userAuthenticator: UserAuthenticator
 

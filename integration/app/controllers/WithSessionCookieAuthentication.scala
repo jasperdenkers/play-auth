@@ -7,7 +7,7 @@ import com.jasperdenkers.play.auth.SessionCookieAuthentication
 import models.User
 import play.api.mvc._
 
-class WithSessionCookieAuthentication @Inject()(val authenticator: UserAuthenticator) extends Controller with SessionCookieAuthentication[User, auth.Session] {
+class WithSessionCookieAuthentication @Inject()(val authenticator: UserAuthenticator) extends InjectedController with SessionCookieAuthentication[User, auth.Session] {
 
   def authenticated = Authenticated { implicit request =>
     Ok(views.html.authenticated())

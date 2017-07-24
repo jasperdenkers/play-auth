@@ -1,7 +1,7 @@
 package com.jasperdenkers.play.auth
 
 import play.api.Configuration
-import play.api.libs.crypto.CookieSignerProvider
+import play.api.http.{JWTConfiguration, SecretConfiguration}
 import play.api.mvc._
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -39,14 +39,14 @@ trait SessionAuthenticator[A, B <: AnyRef] extends Authenticator[A] {
 
 }
 
-trait SessionCookieAuthenticator[A, B <: AnyRef] extends SessionAuthenticator[A, B] {
+trait SessionCookieAuthenticator[A, B <: AnyRef] extends SessionAuthenticator[A, B] { sca =>
 
   def configuration: Configuration
-  def cookieSignerProvider: CookieSignerProvider
+  def secretConfiguration: SecretConfiguration
 
-  val cookieName             = configuration.getString("auth.sessionCookieName").getOrElse("session")
-  val cookieMaxAge           = configuration.getInt("auth.sessionCookieMaxAge").getOrElse(3600) // One hour
-  val cookieMaxAgeRemembered = configuration.getInt("auth.sessionCookieMaxAgeRemembered").getOrElse(7 * 24 * 3600) // One week
+  val cookieName             = configuration.getOptional[String]("auth.sessionCookieName").getOrElse("session")
+  val cookieMaxAge           = configuration.getOptional[Int]("auth.sessionCookieMaxAge").getOrElse(3600) // One hour
+  val cookieMaxAgeRemembered = configuration.getOptional[Int]("auth.sessionCookieMaxAgeRemembered").getOrElse(7 * 24 * 3600) // One week
 
   def emptySession: B
 
@@ -54,13 +54,15 @@ trait SessionCookieAuthenticator[A, B <: AnyRef] extends SessionAuthenticator[A,
 
   def deserializeSession(map: Map[String, String]): Option[B]
 
-  trait SessionCookieBaker extends CookieBaker[B] {
+  trait SessionCookieBaker extends CookieBaker[B] with JWTCookieDataCodec {
+    val secretConfiguration                   = sca.secretConfiguration
     val COOKIE_NAME                           = cookieName
-    val emptyCookie                           = emptySession
     override val isSigned                     = true
-    val cookieSigner                          = cookieSignerProvider.get
+    val emptyCookie                           = emptySession
     def serialize(session: B)                 = serializeSession(session)
     def deserialize(map: Map[String, String]) = deserializeSession(map).getOrElse(emptySession)
+    val path: String = "/"
+    val jwtConfiguration = JWTConfiguration()
   }
 
   object SessionCookieBaker extends SessionCookieBaker

@@ -1,9 +1,10 @@
 import auth.UserAuthenticator
-import org.scalatestplus.play.{OneAppPerSuite, PlaySpec}
+import org.scalatestplus.play.PlaySpec
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.Helpers._
 import play.api.test._
 
-class WithAuthenticationSpec extends PlaySpec with OneAppPerSuite with AuthenticationHelper {
+class WithAuthenticationSpec extends PlaySpec with GuiceOneAppPerSuite with AuthenticationHelper {
 
   val userAuthenticator = app.injector.instanceOf[UserAuthenticator]
 

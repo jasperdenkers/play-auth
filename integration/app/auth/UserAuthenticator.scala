@@ -6,7 +6,7 @@ import javax.inject.Inject
 import com.jasperdenkers.play.auth.{LoginData, SessionCookieAuthenticator}
 import models.{User, UserRepository}
 import play.api.Configuration
-import play.api.libs.crypto.CookieSignerProvider
+import play.api.http.SecretConfiguration
 import play.api.mvc._
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -19,7 +19,7 @@ object Session {
   def empty = Session("", Instant.now, 0)
 }
 
-class UserAuthenticator @Inject()(val configuration: Configuration, val cookieSignerProvider: CookieSignerProvider) extends SessionCookieAuthenticator[User, Session] with Results {
+class UserAuthenticator @Inject()(val configuration: Configuration, val secretConfiguration: SecretConfiguration) extends SessionCookieAuthenticator[User, Session] with Results {
 
   def emptySession = Session.empty
 

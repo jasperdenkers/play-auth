@@ -26,7 +26,7 @@ test-unit:
   script:
     - sbt -Dsbt.ivy.home=`pwd`/.ivy2 -Dsbt.boot.directory=`pwd`/.sbt/boot ";project core;clean;coverage;test;coverageReport"
     - mkdir scoverage-report
-    - cp -R core/target/scala-2.11/scoverage-report/* scoverage-report/
+    - cp -R core/target/scala-2.12/scoverage-report/* scoverage-report/
   artifacts:
     name: scoverage-report
     paths:
