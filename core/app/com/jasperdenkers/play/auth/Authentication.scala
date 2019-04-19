@@ -17,22 +17,22 @@ trait Authentication[A] extends AuthRequests[A] { self: BaseController =>
   }
 
   object Authenticated extends BaseActionBuilder[AuthenticatedRequestWithIdentity] {
-    def invokeBlock[B](request: Request[B], block: (AuthenticatedRequestWithIdentity[B]) => Future[Result]) =
+    def invokeBlock[B](request: Request[B], block: AuthenticatedRequestWithIdentity[B] => Future[Result]) =
       authenticated(request, block)
   }
 
   object MaybeAuthenticated extends BaseActionBuilder[Request] {
-    def invokeBlock[B](request: Request[B], block: (Request[B]) => Future[Result]) =
+    def invokeBlock[B](request: Request[B], block: Request[B] => Future[Result]) =
       maybeAuthenticated(request, block)
   }
 
-  protected def authenticated[B](request: Request[B], block: (AuthenticatedRequestWithIdentity[B]) => Future[Result]) =
+  protected def authenticated[B](request: Request[B], block: AuthenticatedRequestWithIdentity[B] => Future[Result]) =
     authenticator.authenticatedIdentity(request).flatMap {
       case Some(identity) => block(AuthenticatedRequest(identity, request))
       case None => onUnauthenticated(request)
     }
 
-  protected def maybeAuthenticated[B](request: Request[B], block: (Request[B]) => Future[Result]) =
+  protected def maybeAuthenticated[B](request: Request[B], block: Request[B] => Future[Result]) =
     authenticator.authenticatedIdentity(request).flatMap {
       case Some(identity) => block(AuthenticatedRequest(identity, request))
       case None           => block(request)
@@ -44,7 +44,7 @@ trait SessionAuthentication[A, B <: AnyRef] extends Authentication[A] { self: Ba
 
   override def authenticator: SessionAuthenticator[A, B]
 
-  override def authenticated[C](request: Request[C], block: (AuthenticatedRequestWithIdentity[C]) => Future[Result]) =
+  override def authenticated[C](request: Request[C], block: AuthenticatedRequestWithIdentity[C] => Future[Result]) =
     authenticator.authenticatedIdentityWithUpdatedSession(request).flatMap {
       case Some((identity, updatedSession)) =>
         for {
@@ -54,7 +54,7 @@ trait SessionAuthentication[A, B <: AnyRef] extends Authentication[A] { self: Ba
       case None => onUnauthenticated(request)
     }
 
-  override def maybeAuthenticated[C](request: Request[C], block: (Request[C]) => Future[Result]) =
+  override def maybeAuthenticated[C](request: Request[C], block: Request[C] => Future[Result]) =
     authenticator.authenticatedIdentityWithUpdatedSession(request).flatMap {
       case Some((identity, updatedSession)) =>
         for {
@@ -72,7 +72,7 @@ trait SessionCookieAuthentication[A, B <: AnyRef] extends SessionAuthentication[
 
   override def authenticator: SessionCookieAuthenticator[A, B]
 
-  override def authenticated[C](request: Request[C], block: (AuthenticatedRequestWithIdentity[C]) => Future[Result]) =
+  override def authenticated[C](request: Request[C], block: AuthenticatedRequestWithIdentity[C] => Future[Result]) =
     authenticator.authenticatedIdentityWithUpdatedSessionCookie(request).flatMap {
       case Some((identity, updatedSession, updatedSessionCookie)) =>
         for {
@@ -83,7 +83,7 @@ trait SessionCookieAuthentication[A, B <: AnyRef] extends SessionAuthentication[
       case None => onUnauthenticated(request)
     }
 
-  override def maybeAuthenticated[C](request: Request[C], block: (Request[C]) => Future[Result]) =
+  override def maybeAuthenticated[C](request: Request[C], block: Request[C] => Future[Result]) =
     authenticator.authenticatedIdentityWithUpdatedSessionCookie(request).flatMap {
       case Some((identity, updatedSession, updatedSessionCookie)) =>
         for {

@@ -29,7 +29,7 @@ trait Authorization[A] extends AuthRequests[A] { self: Authentication[A] with Ba
     Authorized(Authenticated, capabilities :_ *)
 
   def MaybeAuthorized = MaybeAuthenticated andThen new BaseActionBuilder[Request] {
-    def invokeBlock[B](request: Request[B], block: (Request[B]) => Future[Result]) = {
+    def invokeBlock[B](request: Request[B], block: Request[B] => Future[Result]) = {
       request match {
         case authenticatedRequest: AuthenticatedRequestWithIdentity[B @unchecked] =>
           authorizator.getTokens(authenticatedRequest).flatMap { tokens =>
