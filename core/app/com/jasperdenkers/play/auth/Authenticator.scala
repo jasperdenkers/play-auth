@@ -21,7 +21,7 @@ trait SessionAuthenticator[A, B <: AnyRef] extends Authenticator[A] {
 
   def authenticatedIdentity(session: B): Future[Option[A]]
 
-  def authenticatedIdentity(request: RequestHeader) =
+  def authenticatedIdentity(request: RequestHeader): Future[Option[A]] =
     authenticatedIdentity(sessionFromRequest(request))
 
   def authenticatedIdentityWithUpdatedSession(request: RequestHeader): Future[Option[(A, B)]] = {
@@ -61,7 +61,7 @@ trait SessionCookieAuthenticator[A, B <: AnyRef] extends SessionAuthenticator[A,
     val emptyCookie                           = emptySession
     def serialize(session: B)                 = serializeSession(session)
     def deserialize(map: Map[String, String]) = deserializeSession(map).getOrElse(emptySession)
-    val path: String = "/"
+    override val path: String = "/"
     val jwtConfiguration = JWTConfiguration()
   }
 
