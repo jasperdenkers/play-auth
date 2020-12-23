@@ -4,5 +4,7 @@ project/target/*
 project/project/*
 logs/*
 
-# IntelliJ IDEA
+# IDEs
 .idea/*
+.metals/*
+.bsp/*
