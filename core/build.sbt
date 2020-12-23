@@ -6,7 +6,7 @@ licenses := Seq("MIT" -> url("https://opensource.org/licenses/mit-license"))
 
 libraryDependencies ++= Seq(
   // Testing
-  "org.scalatestplus.play" %% "scalatestplus-play" % "4.0.2" % Test
+  "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0" % Test
 )
 
 publishTo := {
