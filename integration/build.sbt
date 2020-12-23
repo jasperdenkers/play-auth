@@ -6,7 +6,7 @@ libraryDependencies ++= Seq(
   "org.webjars" % "bootstrap"     % "3.3.7" exclude ("org.webjars", "jquery"),
 
   // Crypto
-  "org.mindrot" % "jbcrypt" % "0.3m",
+  "org.mindrot" % "jbcrypt" % "0.4",
   
   // Testing
   "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0" % Test
