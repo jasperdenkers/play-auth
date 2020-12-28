@@ -7,3 +7,5 @@ lazy val commonSettings = Seq(
 lazy val core = (project in file("core")).settings(commonSettings: _*).enablePlugins(PlayScala)
 
 lazy val integration = (project in file("integration")).settings(commonSettings: _*).dependsOn(core).enablePlugins(PlayScala)
+
+Global / onChangedBuildSource := ReloadOnSourceChanges
