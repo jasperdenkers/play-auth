@@ -1,4 +1,4 @@
-image: hseeberger/scala-sbt:8u265_1.4.5_2.13.4
+image: hseeberger/scala-sbt:8u265_1.4.6_2.13.4
 
 cache:
   paths:
