@@ -4,6 +4,8 @@ import play.api.mvc.RequestHeader
 
 package object auth {
 
+  type TokenPredicate = Token => Boolean
+
   implicit class CapabilityDisjunctionOps(firstCapability: Capability) {
     def ||(secondCapability: Capability) = Disjunction(firstCapability, secondCapability)
   }

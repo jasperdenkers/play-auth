@@ -5,7 +5,7 @@ trait Capability {
 }
 
 trait CapabilityByToken extends Capability {
-  def predicate: Token => Boolean
+  def predicate: TokenPredicate
   override def authorize(tokens: Set[Token]) = tokens.exists(predicate)
 }
 
