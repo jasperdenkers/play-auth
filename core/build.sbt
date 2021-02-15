@@ -9,6 +9,25 @@ libraryDependencies ++= Seq(
   "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0" % Test
 )
 
+import xerial.sbt.Sonatype._
+
+sonatypeProjectHosting := Some(
+  GitLabHosting(
+    "jasperdenkers",
+    "play-auth",
+    "jasperdenkers@gmail.com"
+  )
+)
+
+developers := List(
+  Developer(
+    id="jasperdenkers",
+    name="Jasper Denkers",
+    email="jasperdenkers@gmailcom",
+    url=url("http://jasperdenkers.com")
+  )
+)
+
 publishTo := sonatypePublishToBundle.value
 
 publishMavenStyle := true
