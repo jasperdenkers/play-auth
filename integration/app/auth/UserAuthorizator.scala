@@ -1,17 +1,13 @@
 package auth
 
-import javax.inject.Inject
-
 import auth.Tokens.IsAdmin
 import com.jasperdenkers.play.auth.Authorizator
 import models.User
-import play.api.Configuration
-import play.api.libs.crypto.CookieSignerProvider
 import play.api.mvc._
 
 import scala.concurrent.Future
 
-class UserAuthorizator @Inject()(configuration: Configuration, cookieSignerProvider: CookieSignerProvider, val authenticator: UserAuthenticator) extends Authorizator[User] with Results {
+class UserAuthorizator extends Authorizator[User] with Results {
 
   def getTokens[B](authenticatedRequest: AuthenticatedRequestWithIdentity[B]) =
     Future.successful {

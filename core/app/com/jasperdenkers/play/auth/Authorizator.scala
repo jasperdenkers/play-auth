@@ -7,8 +7,6 @@ import scala.concurrent.Future
 
 trait Authorizator[A] extends AuthRequests[A] {
 
-  def authenticator: Authenticator[A]
-
   def getTokens[B](authenticatedRequest: AuthenticatedRequestWithIdentity[B]): Future[Set[Token]]
 
   def isAuthorized[B](authenticatedRequest: AuthenticatedRequestWithIdentity[B], capability: Capability): Future[Boolean] =
