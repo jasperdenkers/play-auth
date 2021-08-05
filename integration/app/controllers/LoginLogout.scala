@@ -37,7 +37,7 @@ class LoginLogout @Inject()(val authenticator: UserAuthenticator) extends Inject
       loginData =>
         authenticator.login(loginData).map {
           case Some(userSessionCookie) =>
-            val redirectAfterLogin = Redirect(controllers.routes.WithAuthentication.authenticated())
+            val redirectAfterLogin = Redirect(controllers.routes.WithAuthentication.authenticated)
 
             redirectAfterLogin.withCookies(userSessionCookie).flashing {
               "success" -> "You are successfully logged in"
@@ -51,7 +51,7 @@ class LoginLogout @Inject()(val authenticator: UserAuthenticator) extends Inject
   }
 
   def doLogout = Action.async { request =>
-    val redirectAfterLogout = Redirect(controllers.routes.LoginLogout.login()).flashing {
+    val redirectAfterLogout = Redirect(controllers.routes.LoginLogout.login).flashing {
       "success" -> "You are successfully logged out"
     }
 

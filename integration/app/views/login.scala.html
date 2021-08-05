@@ -2,7 +2,7 @@
 
 @main("Login") {
 
-    <form action="@controllers.routes.LoginLogout.doLogin()" method="post">
+    <form action="@controllers.routes.LoginLogout.doLogin" method="post">
         @form.errors.map { error =>
             <p class="alert alert-danger">@error.messages.mkString(", ")</p>
         }

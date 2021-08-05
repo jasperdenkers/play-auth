@@ -47,7 +47,7 @@ class UserAuthenticator @Inject()(val configuration: Configuration, val secretCo
 
   def notAuthenticatedResult[B](request: Request[B]) =
     Future.successful {
-      Redirect(controllers.routes.LoginLogout.login())
+      Redirect(controllers.routes.LoginLogout.login)
     }
 
   def login(loginData: LoginData) =

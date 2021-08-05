@@ -20,7 +20,7 @@ trait AuthenticationHelper { self: GuiceOneAppPerSuite =>
       "remember" -> loginData.remember.toString
     )
 
-    route(app, FakeRequest(controllers.routes.LoginLogout.doLogin()).withJsonBody(Json.toJson(data))).get
+    route(app, FakeRequest(controllers.routes.LoginLogout.doLogin).withJsonBody(Json.toJson(data))).get
   }
 
   def getSessionCookie(loginData: LoginData) = {
