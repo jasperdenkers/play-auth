@@ -10,10 +10,10 @@ class LoginLogoutSpec extends PlaySpec with GuiceOneAppPerSuite with Authenticat
   "LoginLogout controller" should {
 
     "successfully authenticate admin and return a cookie with the session" in {
-      val loginData = adminLoginData(false)
-      val result = loginResult(loginData)
+      val loginData     = adminLoginData(false)
+      val result        = loginResult(loginData)
       val sessionCookie = cookies(result).get(userAuthenticator.cookieName)
-      val session = userAuthenticator.SessionCookieBaker.decodeFromCookie(sessionCookie)
+      val session       = userAuthenticator.SessionCookieBaker.decodeFromCookie(sessionCookie)
 
       status(result) mustBe SEE_OTHER
       session.username mustBe loginData.identifier

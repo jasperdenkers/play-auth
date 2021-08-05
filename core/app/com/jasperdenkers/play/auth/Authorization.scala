@@ -9,12 +9,18 @@ trait Authorization[A] extends AuthRequests[A] { self: Authentication[A] with Ba
 
   def authorizator: Authorizator[A]
 
-  def onUnauthorized[B](authorizedRequest: AuthorizedRequestWithIdentity[B]): Future[Result] = authorizator.notAuthorizedResult(authorizedRequest)
+  def onUnauthorized[B](authorizedRequest: AuthorizedRequestWithIdentity[B]): Future[Result] =
+    authorizator.notAuthorizedResult(authorizedRequest)
 
-  def Authorized(authentication: BaseActionBuilder[AuthenticatedRequestWithIdentity])(capabilities: Capability*): ActionBuilder[AuthorizedRequestWithIdentity, AnyContent] =
+  def Authorized(
+      authentication: BaseActionBuilder[AuthenticatedRequestWithIdentity]
+  )(capabilities: Capability*): ActionBuilder[AuthorizedRequestWithIdentity, AnyContent] =
     authentication andThen new ActionFunction[AuthenticatedRequestWithIdentity, AuthorizedRequestWithIdentity] {
       def executionContext = self.defaultExecutionContext
-      def invokeBlock[B](authenticatedRequest: AuthenticatedRequestWithIdentity[B], block: AuthorizedRequestWithIdentity[B] => Future[Result]) =
+      def invokeBlock[B](
+          authenticatedRequest: AuthenticatedRequestWithIdentity[B],
+          block: AuthorizedRequestWithIdentity[B] => Future[Result]
+      ) =
         authorizator.getTokens(authenticatedRequest).flatMap { tokens =>
           val authorizedRequest = AuthorizedRequest.fromAuthenticatedRequest(authenticatedRequest, tokens)
 
@@ -26,7 +32,7 @@ trait Authorization[A] extends AuthRequests[A] { self: Authentication[A] with Ba
     }
 
   def Authorized(capabilities: Capability*): ActionBuilder[AuthorizedRequestWithIdentity, AnyContent] =
-    Authorized(Authenticated)(capabilities :_ *)
+    Authorized(Authenticated)(capabilities: _*)
 
   def MaybeAuthorized = MaybeAuthenticated andThen new BaseActionBuilder[Request] {
     def invokeBlock[B](request: Request[B], block: Request[B] => Future[Result]) = {

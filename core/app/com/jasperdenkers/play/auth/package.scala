@@ -21,13 +21,13 @@ package object auth {
   implicit def isAuthenticated(implicit request: RequestHeader) =
     request match {
       case _: AuthenticatedRequest[_, _] | _: AuthorizedRequest[_, _] => true
-      case _ => false
+      case _                                                          => false
     }
 
   implicit def isAuthorized(capabilities: Capability*)(implicit request: RequestHeader) =
     request match {
       case authorizedRequest: AuthorizedRequest[_, _] => authorizedRequest.isAuthorized(capabilities.toSet)
-      case _ => false
+      case _                                          => false
     }
 
 }

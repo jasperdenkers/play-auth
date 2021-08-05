@@ -20,7 +20,8 @@ class WithAuthenticationSpec extends PlaySpec with GuiceOneAppPerSuite with Auth
 
     "successfully return a page that requires authentication while being authenticated" in {
       val sessionCookie = getSessionCookie(userLoginData(false))
-      val result = route(app, FakeRequest(controllers.routes.WithAuthentication.authenticated).withCookies(sessionCookie.get)).get
+      val result =
+        route(app, FakeRequest(controllers.routes.WithAuthentication.authenticated).withCookies(sessionCookie.get)).get
 
       status(result) mustBe OK
     }

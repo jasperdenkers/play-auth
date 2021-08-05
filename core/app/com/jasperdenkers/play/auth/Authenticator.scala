@@ -28,9 +28,10 @@ trait SessionAuthenticator[A, B <: AnyRef] extends Authenticator[A] {
     val session = sessionFromRequest(request)
 
     authenticatedIdentity(session).flatMap {
-      case Some(identity) => updateSession(session).map { updatedSession =>
-        Some((identity, updatedSession))
-      }
+      case Some(identity) =>
+        updateSession(session).map { updatedSession =>
+          Some((identity, updatedSession))
+        }
       case None => Future.successful(None)
     }
   }
@@ -44,9 +45,10 @@ trait SessionCookieAuthenticator[A, B <: AnyRef] extends SessionAuthenticator[A,
   def configuration: Configuration
   def secretConfiguration: SecretConfiguration
 
-  val cookieName             = configuration.getOptional[String]("auth.sessionCookieName").getOrElse("session")
-  val cookieMaxAge           = configuration.getOptional[Int]("auth.sessionCookieMaxAge").getOrElse(3600) // One hour
-  val cookieMaxAgeRemembered = configuration.getOptional[Int]("auth.sessionCookieMaxAgeRemembered").getOrElse(7 * 24 * 3600) // One week
+  val cookieName   = configuration.getOptional[String]("auth.sessionCookieName").getOrElse("session")
+  val cookieMaxAge = configuration.getOptional[Int]("auth.sessionCookieMaxAge").getOrElse(3600) // One hour
+  val cookieMaxAgeRemembered =
+    configuration.getOptional[Int]("auth.sessionCookieMaxAgeRemembered").getOrElse(7 * 24 * 3600) // One week
 
   def emptySession: B
 
@@ -61,8 +63,8 @@ trait SessionCookieAuthenticator[A, B <: AnyRef] extends SessionAuthenticator[A,
     val emptyCookie                           = emptySession
     def serialize(session: B)                 = serializeSession(session)
     def deserialize(map: Map[String, String]) = deserializeSession(map).getOrElse(emptySession)
-    override val path: String = "/"
-    val jwtConfiguration = JWTConfiguration()
+    override val path: String                 = "/"
+    val jwtConfiguration                      = JWTConfiguration()
   }
 
   object SessionCookieBaker extends SessionCookieBaker
@@ -90,7 +92,7 @@ trait SessionCookieAuthenticator[A, B <: AnyRef] extends SessionAuthenticator[A,
           val cookieBaker =
             originalCookie match {
               case Some(cookie) if cookie.maxAge.nonEmpty => PersistentSessionCookieBaker
-              case _ => TransientSessionCookieBaker
+              case _                                      => TransientSessionCookieBaker
             }
 
           val updatedSessionCookie = cookieBaker.encodeAsCookie(updatedSession)

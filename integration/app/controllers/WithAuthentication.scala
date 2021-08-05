@@ -7,7 +7,9 @@ import com.jasperdenkers.play.auth.Authentication
 import models.User
 import play.api.mvc._
 
-class WithAuthentication @Inject()(val authenticator: UserAuthenticator) extends InjectedController with Authentication[User] {
+class WithAuthentication @Inject() (val authenticator: UserAuthenticator)
+    extends InjectedController
+    with Authentication[User] {
 
   def authenticated = Authenticated { implicit request =>
     Ok(views.html.authenticated())

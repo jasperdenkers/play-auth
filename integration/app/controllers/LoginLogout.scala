@@ -12,7 +12,9 @@ import play.api.mvc._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class LoginLogout @Inject()(val authenticator: UserAuthenticator) extends InjectedController with Authentication[User] {
+class LoginLogout @Inject() (val authenticator: UserAuthenticator)
+    extends InjectedController
+    with Authentication[User] {
 
   val loginForm = Form(
     mapping(

@@ -9,10 +9,16 @@ trait Authorizator[A] extends AuthRequests[A] {
 
   def getTokens[B](authenticatedRequest: AuthenticatedRequestWithIdentity[B]): Future[Set[Token]]
 
-  def isAuthorized[B](authenticatedRequest: AuthenticatedRequestWithIdentity[B], capability: Capability): Future[Boolean] =
+  def isAuthorized[B](
+      authenticatedRequest: AuthenticatedRequestWithIdentity[B],
+      capability: Capability
+  ): Future[Boolean] =
     isAuthorized(authenticatedRequest, Set(capability))
 
-  def isAuthorized[B](authenticatedRequest: AuthenticatedRequestWithIdentity[B], capabilities: Set[Capability]): Future[Boolean] =
+  def isAuthorized[B](
+      authenticatedRequest: AuthenticatedRequestWithIdentity[B],
+      capabilities: Set[Capability]
+  ): Future[Boolean] =
     getTokens(authenticatedRequest).map(isAuthorized(capabilities, _))
 
   def isAuthorized(capabilities: Set[Capability], tokens: Set[Token]): Boolean =

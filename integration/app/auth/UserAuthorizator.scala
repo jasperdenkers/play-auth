@@ -13,7 +13,7 @@ class UserAuthorizator extends Authorizator[User] with Results {
     Future.successful {
       authenticatedRequest.identity match {
         case admin if admin.username == "admin" => Set(IsAdmin)
-        case _ => Set.empty
+        case _                                  => Set.empty
       }
     }
 

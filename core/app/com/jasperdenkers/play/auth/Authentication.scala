@@ -12,7 +12,7 @@ trait Authentication[A] extends AuthRequests[A] { self: BaseController =>
   def onUnauthenticated[B](request: Request[B]): Future[Result] = authenticator.notAuthenticatedResult(request)
 
   trait BaseActionBuilder[T[_]] extends ActionBuilder[T, AnyContent] {
-    def parser = self.parse.defaultBodyParser
+    def parser           = self.parse.defaultBodyParser
     def executionContext = self.defaultExecutionContext
   }
 
@@ -29,7 +29,7 @@ trait Authentication[A] extends AuthRequests[A] { self: BaseController =>
   protected def authenticated[B](request: Request[B], block: AuthenticatedRequestWithIdentity[B] => Future[Result]) =
     authenticator.authenticatedIdentity(request).flatMap {
       case Some(identity) => block(AuthenticatedRequest(identity, request))
-      case None => onUnauthenticated(request)
+      case None           => onUnauthenticated(request)
     }
 
   protected def maybeAuthenticated[B](request: Request[B], block: Request[B] => Future[Result]) =

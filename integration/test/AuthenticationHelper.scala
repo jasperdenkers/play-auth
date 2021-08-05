@@ -10,8 +10,8 @@ trait AuthenticationHelper { self: GuiceOneAppPerSuite =>
   def userAuthenticator: UserAuthenticator
 
   def adminLoginData(remember: Boolean) = LoginData("admin", "123", remember)
-  def userLoginData(remember: Boolean) = LoginData("user", "321", remember)
-  val invalidLoginData = LoginData("invalid", "invalid", false)
+  def userLoginData(remember: Boolean)  = LoginData("user", "321", remember)
+  val invalidLoginData                  = LoginData("invalid", "invalid", false)
 
   def loginResult(loginData: LoginData) = {
     val data = Map(
