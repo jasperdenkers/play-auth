@@ -6,7 +6,7 @@ licenses := Seq("MIT" -> url("https://opensource.org/licenses/mit-license"))
 
 libraryDependencies ++= Seq(
   // Testing
-  "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0" % Test
+  "org.scalatestplus.play" %% "scalatestplus-play" % "6.0.0" % Test
 )
 
 import xerial.sbt.Sonatype._

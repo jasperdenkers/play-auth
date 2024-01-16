@@ -1,4 +1,4 @@
-image: hseeberger/scala-sbt:8u265_1.4.6_2.13.4
+image: registry.gitlab.com/developtheweb/sbt-scala-ci-image:java17-latest
 
 cache:
   paths:

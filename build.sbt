@@ -1,7 +1,7 @@
 lazy val commonSettings = Seq(
   organization := "com.jasperdenkers",
-  scalaVersion := "2.13.6",
-  crossScalaVersions := Seq("2.12.14", "2.13.6")
+  scalaVersion := "2.13.12",
+  crossScalaVersions := Seq("2.13.12")
 )
 
 lazy val core = (project in file("core")).settings(commonSettings: _*).enablePlugins(PlayScala)
